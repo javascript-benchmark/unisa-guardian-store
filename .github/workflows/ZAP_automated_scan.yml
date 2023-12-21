@@ -1,0 +1,28 @@
+name: "OWASP ZAP Baseline Scan"
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: Scan unisa guardian store
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+        
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.9.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          docker_name: 'antruong2001/owasp-zap-docker-stable'
+          target: 'http://localhost:3000/#/search'
+          issue_title: ZAP Test for Guardian Store
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a -j -autorun zap.yaml'
